@@ -16,6 +16,10 @@ export default async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL(process.env.NEXTAUTH_URL + "/login"), request.url)
     }
 
+    if (request.nextUrl.pathname === '/login' && token) {
+        return NextResponse.redirect(new URL('/', request.url));
+    }
+
 
     return NextResponse.next();
 }

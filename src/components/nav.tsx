@@ -1,11 +1,11 @@
-'use client';
+'use client'
 
 import {logout} from "@/app/api/action/auth";
-import { useSession } from "next-auth/react";
+import {SessionProvider, useSession} from "next-auth/react";
 import Link from "next/link";
 
-const Nav = () => {
-    const { data: session } = useSession();
+export const Nav = () => {
+    const {data: session} = useSession<Session>();
 
     return (
         <nav className="bg-gray-800 text-white p-4">
@@ -16,12 +16,12 @@ const Nav = () => {
                         <Link href="/" className="hover:text-gray-300">Home</Link>
                     </li>
                     {session && (
-                            <Link href="/user" className="hover:text-gray-300">{session.user.name}</Link>
+                        <Link href="/user" className="hover:text-gray-300">{session.user.name}</Link>
                     )}
                     <li>
-                        <Link href={session ? '/': '/login'}
-                             onClick={() => session ? logout() : ''}
-                            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
+                        <Link href={session ? '/' : '/login'}
+                              onClick={() => session ? logout() : ''}
+                              className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
                             {session ? 'Sign Out' : 'Sign In'}
                         </Link>
                     </li>
@@ -31,4 +31,13 @@ const Nav = () => {
     );
 };
 
-export default Nav;
+const Navigation = () => {
+        return (
+            <SessionProvider>
+                <Nav></Nav>
+            </SessionProvider>
+        )
+    }
+
+export default Navigation;
+
