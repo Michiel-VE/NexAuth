@@ -8,7 +8,7 @@ on:
 jobs:
   NextJS-Tests:
     name: Tests for Next.js app
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout code
