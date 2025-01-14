@@ -13,6 +13,7 @@ The application allows users to sign in via OAuth providers, and it supports ses
 - [Running the Development Server](#running-the-development-server)
 - [Testing](#testing)
 - [Linting](#Linting)
+- [Pipeline](#Pipeline)
 
 ## Project Overview
 
@@ -130,8 +131,61 @@ To run linting on the project, execute the following command:
 npm run lint
 ```
 
-This will check for any linting issues in your code and display them in the terminal. To automatically fix issues that can be corrected, run:
+This will check for any linting issues in your code and display them in the terminal. To automatically fix issues that
+can be corrected, run:
 
 ````bash
 npm run lint:fix
+````
+
+## Pipeline
+
+### Prerequisites
+
+Ensure that your Next.js project includes Jest and its related dependencies.
+
+Define the jest script in your package.json:
+
+````json
+{
+  "scripts": {
+    "jest": "jest"
+  }
+}
+````
+
+### Workflow Configuration
+
+Workflow Name: Tests for Next.js app
+
+Trigger: Push to the main branch
+
+Environment: Ubuntu 24.04, Node.js 20
+
+### Workflow Steps
+
+1. Checkout code
+
+````bash
+uses: actions/checkout@v2
+````
+
+2. Setup Nodejs
+
+````bash
+uses: actions/setup-node@v2
+with:
+  node-version: "20"
+````
+
+3. Install dependencies
+
+````bash
+run: npm install
+````
+
+3. Run Jest tests
+
+````bash
+run: npm run jest
 ````
