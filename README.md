@@ -14,6 +14,7 @@ The application allows users to sign in via OAuth providers, and it supports ses
 - [Testing](#testing)
 - [Linting](#Linting)
 - [Pipeline](#Pipeline)
+- [Docker](#Docker)
 
 ## Project Overview
 
@@ -188,4 +189,95 @@ run: npm install
 
 ````bash
 run: npm run jest
+````
+
+## Docker
+### Multi-Stage Node.js Docker Setup
+This project uses a multi-stage Dockerfile to streamline development, building, and running a Node.js application. The three stages are:
+
+1. Build Stage: Installs dependencies and builds the application.
+
+2. Production Stage: Configures a lightweight container for running the application in production.
+
+3. Development Stage: Prepares an environment for local development.
+
+### Dockerfile Overview
+
+#### Build Stage
+
+This stage installs dependencies, copies the application code, and builds the project.
+````dockerfile
+FROM node:18 AS build
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build
+````
+
+#### Production Stage
+
+This stage sets up a lightweight production environment with only the necessary files.
+````dockerfile
+FROM node:18-alpine AS production
+
+WORKDIR /app
+
+COPY --from=build /app/package.json /app/package-lock.json ./
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/.env* ./
+
+EXPOSE 3000
+
+ENV NODE_ENV=production
+
+CMD ["node", "dist/index.js"]
+````
+
+#### Development Stage
+
+This stage configures a development environment with live reloading.
+````dockerfile
+FROM node:18 AS development
+
+WORKDIR /app
+
+COPY . .
+
+RUN npm install
+
+EXPOSE 3000
+
+ENV NODE_ENV=development
+
+CMD ["npm", "run", "dev"]
+````
+
+### Usage
+
+#### Build and Run the Production Container
+Build the production image:
+````bash
+docker build -t your-image-name:production --target production 
+````
+Run the container
+````bash
+docker run -p 3000:3000 your-image-name:production
+````
+
+#### Build and Run the Development Container
+Build the development image:
+````bash
+docker build -t your-image-name:development --target development 
+````
+
+Run the container
+````bash
+docker run -p 3000:3000 your-image-name:development
 ````
